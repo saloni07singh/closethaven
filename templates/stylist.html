@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}AI Stylist{% endblock %}
+{% block eyebrow %}STYLE STUDIO{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><p class="eyebrow">THOUGHTFUL OUTFITS, FROM YOUR OWN CLOSET</p><h1>Style, considered<span class="title-period">.</span></h1><p class="lead">Tell your stylist where you are going. It will work with the pieces you actually own.</p></div><span class="agent-chip"><span class="status-dot"></span> INVENTORY-AWARE AGENT</span></div>
+<div class="stylist-layout">
+  <section class="stylist-form-card"><div class="card-kicker">01 / THE OCCASION</div><h2>Where are you headed?</h2>
+  <form method="post">
+    <label>Choose an occasion<select name="event"><option {% if details.event == 'College' %}selected{% endif %}>College</option><option {% if details.event == 'Office' %}selected{% endif %}>Office</option><option {% if details.event == 'Casual day out' %}selected{% endif %}>Casual day out</option><option {% if details.event == 'Party' %}selected{% endif %}>Party</option><option {% if details.event == 'Wedding' %}selected{% endif %}>Wedding</option><option {% if details.event == 'Travel' %}selected{% endif %}>Travel</option><option {% if details.event == 'Everyday' %}selected{% endif %}>Everyday</option></select></label>
+    <label>City for live weather (optional)<input name="location" value="{{ details.location or '' }}" placeholder="e.g. Mumbai"></label><label>Weather or setting (optional)<input name="weather" value="{{ details.weather or '' }}" placeholder="Add context or leave blank for live weather"></label>
+    <label>Style preference<input name="preference" value="{{ details.preference or '' }}" placeholder="e.g. Minimal, comfortable, smart casual"></label>
+    <button class="button button-dark full-button" type="submit">✳ Build my outfit options</button>
+  </form><p class="form-hint">The agent excludes laundry items and uses your saved wardrobe inventory.</p></section>
+  <section class="results-panel"><div class="card-kicker">02 / YOUR OUTFIT EDIT</div><h2>{% if suggestions %}Made from your wardrobe{% else %}Your next look starts here{% endif %}</h2>
+  {% if suggestions %}<div class="suggestion-list">{% for s in suggestions %}<article class="suggestion-card"><div class="suggestion-head"><div><span class="look-number">LOOK 0{{ loop.index }}</span><h3>{{ s.name }}</h3></div><span class="match-mark">✳</span></div><div class="mini-items">{% for g in s.garments %}<span class="mini-item">{{ g.name }}</span>{% endfor %}</div><p class="reason">{{ s.reason }}</p>
+  <form method="post" action="{{ url_for('save_outfit') }}"><input type="hidden" name="name" value="{{ s.name }}"><input type="hidden" name="occasion" value="{{ details.event }}"><input type="hidden" name="garment_ids" value='{{ s.garments|map(attribute="id")|list|tojson }}'><button class="text-link-button">Save this outfit →</button></form></article>{% endfor %}</div>
+  {% else %}<div class="stylist-empty"><div class="orbit">✳</div><h3>A stylist that knows your closet.</h3><p>Generate outfit combinations using available pieces. Add a mix of tops, bottoms or dresses, and footwear to get the strongest results.</p></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

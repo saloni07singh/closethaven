@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Outfit Planner{% endblock %}
+{% block eyebrow %}OUTFIT PLANNER{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><p class="eyebrow">MAKE SPACE FOR A GOOD OUTFIT</p><h1>Outfit planner<span class="title-period">.</span></h1><p class="lead">Schedule a saved look. Confirm it after you wear it.</p></div></div>
+<div class="planner-layout">
+<section class="planner-form"><p class="eyebrow">ADD TO YOUR CALENDAR</p><h2>Plan a look</h2>
+<form method="post"><label>Saved outfit<select name="outfit_id" required><option value="">Choose an outfit</option>{% for o in outfits %}<option value="{{ o.id }}">{{ o.name }}</option>{% endfor %}</select></label><label>Date<input type="date" name="plan_date" required></label><label>Event<input name="event" required placeholder="e.g. Presentation"></label><button class="button button-dark full-button">Schedule outfit →</button></form>
+{% if not outfits %}<p class="form-hint">Save an outfit from AI Stylist or Rewear Rescue first.</p>{% endif %}
+</section>
+<section class="plans-panel"><p class="eyebrow">YOUR UPCOMING LOOKS</p><h2>On the calendar</h2>
+{% for p in plans %}<article class="plan-row"><div class="date-tile"><strong>{{ p.plan_date[8:10] }}</strong><small>{{ p.plan_date[5:7] }}/{{ p.plan_date[0:4] }}</small></div><div class="plan-info"><h3>{{ p.event }}</h3><p>{{ p.outfit_name or 'Outfit unavailable' }}</p><span class="plan-status {{ p.status }}">{{ 'Confirmed worn' if p.status == 'worn' else 'Planned' }}</span></div>
+{% if p.status != 'worn' %}<form method="post" action="{{ url_for('confirm_worn', plan_id=p.id) }}" onsubmit="return confirm('Confirm that you wore this outfit? This updates your wear history.')"><button class="button button-outline">I wore this</button></form>{% endif %}</article>
+{% else %}<div class="empty-inline"><span>▦</span><h3>Your calendar is clear.</h3><p>Save a look and schedule it here.</p></div>{% endfor %}
+</section></div>
+{% endblock %}

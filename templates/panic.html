@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Rewear Rescue{% endblock %}
+{% block eyebrow %}REWEAR RESCUE{% endblock %}
+{% block content %}
+<div class="panic-hero"><div><p class="eyebrow light-eyebrow">REWEAR RESCUE · FROM WARDROBE TO OCCASION-READY OUTFIT</p><h1>Running late?<br><i>Find your look.</i></h1><p>Give your agent the event. It checks your available wardrobe, avoids laundry items and shortlists complete looks for your approval.</p></div><div class="panic-symbol">⚡</div></div>
+<div class="panic-workspace">
+  <section class="panic-form"><span class="step-tag">START THE AGENT</span><h2>What are you dressing for?</h2>
+    <form method="post">
+      <label>Event or occasion<input name="event" required value="{{ details.event or '' }}" placeholder="e.g. Dinner with friends"></label>
+      <label>How soon?<input name="when" value="{{ details.when or '' }}" placeholder="e.g. In 90 minutes"></label>
+      <label>City for live weather (optional)<input name="location" value="{{ details.location or '' }}" placeholder="e.g. Mumbai"></label><label>Weather / setting (optional)<input name="weather" value="{{ details.weather or '' }}" placeholder="Leave blank to fetch live conditions"></label>
+      <label>Any preference?<input name="preference" value="{{ details.preference or '' }}" placeholder="e.g. Comfortable, polished, no heels"></label>
+      <button class="button button-terracotta full-button" type="submit">⚡ Find my look now</button>
+    </form>
+    <p class="form-hint">No garment is reserved or marked as worn without your action.</p>
+  </section>
+  <section class="panic-results"><div class="result-top"><span class="step-tag">AGENT OUTPUT</span><span class="live-tag"><span></span> READY</span></div>
+    {% if suggestions %}<h2>Your shortlist is ready.</h2><p class="muted">Review the options, then save one to your planner.</p>
+      {% for s in suggestions %}<article class="panic-look"><div class="panic-look-title"><span>OPTION 0{{ loop.index }}</span><h3>{{ s.name }}</h3></div><div class="mini-items">{% for g in s.garments %}<span class="mini-item">{{ g.name }}</span>{% endfor %}</div><p class="reason">{{ s.reason }}</p>
+      <form method="post" action="{{ url_for('save_outfit') }}"><input type="hidden" name="name" value="{{ s.name }}"><input type="hidden" name="occasion" value="{{ details.event }}"><input type="hidden" name="garment_ids" value='{{ s.garments|map(attribute="id")|list|tojson }}'><button class="button button-dark">Approve & save to planner →</button></form></article>{% endfor %}
+    {% else %}<div class="panic-placeholder"><div class="big-bolt">ϟ</div><h3>Your agent is on standby.</h3><p>When you submit an event, the agent will check availability, assemble combinations and explain its shortlist.</p><div class="agent-steps"><span>01&nbsp; Understand event</span><span>02&nbsp; Check wardrobe</span><span>03&nbsp; Rank outfit options</span><span>04&nbsp; Wait for approval</span></div></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ClosetHaven{% endblock %} · Wear more of what you own</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">C</span>
+        <span><strong>ClosetHaven</strong><small>PERSONAL CLOSET INTELLIGENCE</small></span>
+      </a>
+      <div class="side-label">YOUR SPACE</div>
+      <nav class="side-nav">
+        <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}"><span>⌂</span> Overview</a>
+        <a href="{{ url_for('wardrobe') }}" class="{% if request.endpoint == 'wardrobe' %}active{% endif %}"><span>▤</span> My wardrobe</a>
+        <a href="{{ url_for('stylist') }}" class="{% if request.endpoint == 'stylist' %}active{% endif %}"><span>✳</span> AI stylist</a>
+        <a href="{{ url_for('planner') }}" class="{% if request.endpoint == 'planner' %}active{% endif %}"><span>▦</span> Outfit planner</a>
+        <a href="{{ url_for('panic') }}" class="panic-link {% if request.endpoint == 'panic' %}active{% endif %}"><span>⚡</span> Rewear Rescue <em>LIVE DEMO</em></a>
+      </nav>
+      <div class="side-label secondary-label">INSIGHTS</div>
+      <nav class="side-nav">
+        <a href="{{ url_for('impact') }}" class="{% if request.endpoint == 'impact' %}active{% endif %}"><span>❋</span> Wardrobe insights</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="eco-note"><span>✦</span><p>Style starts with what you already own.</p></div>
+        <small>TECH TITANS · PROTOTYPE</small>
+      </div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumb">CLOSETHAVEN <span>/</span> {% block eyebrow %}OVERVIEW{% endblock %}</div>
+        <div class="topbar-right"><span class="status-dot"></span> YOUR CLOSET, IN SYNC</div>
+      </header>
+      <section class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </section>
+      <footer class="footer">CLOSETHAVEN <span>·</span> WEAR MORE OF WHAT YOU OWN</footer>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

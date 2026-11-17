@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My wardrobe{% endblock %}
+{% block eyebrow %}MY WARDROBE{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><p class="eyebrow">CLOSET INTELLIGENCE · YOUR WARDROBE, ORGANIZED</p><h1>My closet<span class="title-period">.</span></h1><p class="lead">A clear view of your clothes, ready when you are.</p></div>
+<button class="button button-dark" data-open-modal="add-modal">＋ Add a piece</button></div>
+<div class="category-tabs"><a class="{% if not selected %}selected{% endif %}" href="{{ url_for('wardrobe') }}">All pieces</a>{% for cat in categories %}<a class="{% if selected == cat %}selected{% endif %}" href="{{ url_for('wardrobe', category=cat) }}">{{ cat }}</a>{% endfor %}</div>
+<div class="wardrobe-grid">
+{% for g in garments %}
+  <article class="garment-card">
+    <div class="garment-image">
+      {% if g.image %}<img src="{{ url_for('static', filename='uploads/' + g.image) }}" alt="{{ g.name }}">
+      {% else %}<div class="garment-placeholder"><span>{{ g.category[0] }}</span><small>WARDROBE PIECE</small></div>{% endif %}
+      <span class="availability {% if g.status == 'laundry' %}in-laundry{% endif %}">{{ 'In laundry' if g.status == 'laundry' else 'Available' }}</span>
+    </div>
+    <div class="garment-info"><div><h3>{{ g.name }}</h3><p>{{ g.subcategory }} · {{ g.color or 'Colour not set' }}</p></div>
+      <details class="card-menu"><summary>•••</summary><div class="menu-pop">
+        <form method="post" action="{{ url_for('garment_status', garment_id=g.id) }}"><input type="hidden" name="status" value="{{ 'available' if g.status == 'laundry' else 'laundry' }}"><button>{{ 'Mark available' if g.status == 'laundry' else 'Send to laundry' }}</button></form>
+        <form method="post" action="{{ url_for('delete_garment', garment_id=g.id) }}" onsubmit="return confirm('Remove this garment?')"><button class="danger-text">Delete piece</button></form>
+      </div></details></div>
+  </article>
+{% else %}<div class="empty-state"><span>✳</span><h3>Your wardrobe is waiting.</h3><p>Add your first garment to start building outfit recommendations.</p><button class="button button-dark" data-open-modal="add-modal">Add a piece</button></div>{% endfor %}
+</div>
+<div class="modal-backdrop" id="add-modal"><div class="modal">
+  <button class="modal-close" data-close-modal>×</button><p class="eyebrow">GROW YOUR DIGITAL CLOSET</p><h2>Add a garment</h2><p class="muted">Upload a clear photo and enter a few details. Gemini recognition can prefill these fields when configured.</p>
+  <form method="post" action="{{ url_for('add_garment') }}" enctype="multipart/form-data" id="garment-form">
+    <div class="photo-options">
+      <label class="photo-choice"><span>▧</span><strong>Upload from device</strong><small>Choose an existing photo</small><input type="file" name="image" accept="image/jpeg,image/png,image/webp" id="garment-image"></label>
+      <label class="photo-choice"><span>◎</span><strong>Take a photo</strong><small>Use your camera where supported</small><input type="file" accept="image/*" capture="environment" id="camera-image"></label>
+    </div>
+    <div class="image-preview" id="image-preview" hidden><img id="preview-image" alt="Selected garment preview"><span>Photo preview</span></div>
+    <div class="form-grid"><label>Garment name<input name="name" required placeholder="e.g. White linen shirt"></label>
+    <label>Category<select name="category" id="garment-category" required>{% for cat in categories %}<option>{{ cat }}</option>{% endfor %}</select></label>
+    <label>Item type<select name="subcategory" id="garment-subcategory" required>{% for cat, items in categories.items() %}{% for item in items %}<option>{{ item }}</option>{% endfor %}{% endfor %}</select></label>
+    <label>Main colour<select name="color"><option value="">Choose colour</option>{% for shade in ["Black","White","Ivory","Grey","Beige","Brown","Tan","Navy","Blue","Green","Sage","Red","Pink","Purple","Yellow","Orange","Multicolour"] %}<option>{{ shade }}</option>{% endfor %}</select></label>
+    <label>Season<select name="season"><option>All season</option><option>Summer</option><option>Winter</option><option>Monsoon</option></select></label></div>
+    <button class="button button-dark full-button" type="submit">Add to my wardrobe <span>→</span></button>
+    <p class="form-hint" id="recognition-message">Image preparation and Gemini suggestions run when the required services are configured. Review every suggestion before saving.</p>
+  </form>
+</div></div>
+{% endblock %}

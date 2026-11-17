@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}
+{% block eyebrow %}OVERVIEW{% endblock %}
+{% block content %}
+<div class="welcome-row">
+  <div><p class="eyebrow">CLOSETHAVEN · PERSONAL CLOSET INTELLIGENCE</p><h1>Good style begins<br><i>with what you own.</i></h1>
+    <p class="lead">Your closet, organised around the clothes you already own.</p></div>
+  <a class="button button-dark" href="{{ url_for('wardrobe') }}">Explore my wardrobe <span>↗</span></a>
+</div>
+<div class="hero-panel">
+  <div class="hero-copy"><span class="pill-light">THE REWEAR INTELLIGENCE LOOP</span>
+    <h2>Less decision time.<br><i>More considered style.</i></h2>
+    <p>ClosetHaven checks what you own, what is available and what suits your plans before recommending a look.</p>
+    <a href="{{ url_for('stylist') }}" class="text-link light-link">Create an outfit <span>→</span></a>
+  </div>
+  <div class="hero-art"><div class="sun-disc"></div><div class="hanger hanger-one">♧</div><div class="hanger hanger-two">♧</div><div class="art-caption">CURATED FROM YOUR CLOSET</div></div>
+</div>
+<div class="section-heading"><div><p class="eyebrow">YOUR WARDROBE AT A GLANCE</p><h2>Your closet, working harder.</h2></div><a class="text-link" href="{{ url_for('impact') }}">View insights →</a></div>
+<div class="stats-grid">
+  <div class="stat-card"><span class="stat-icon">▤</span><p>Garments in your closet</p><strong>{{ garment_count }}</strong><small>Across your categories</small></div>
+  <div class="stat-card"><span class="stat-icon">◉</span><p>Ready to wear</p><strong>{{ available_count }}</strong><small>Available right now</small></div>
+  <div class="stat-card"><span class="stat-icon">▦</span><p>Outfits planned</p><strong>{{ planned }}</strong><small>Future outfit plans</small></div>
+  <div class="stat-card"><span class="stat-icon">↻</span><p>Confirmed wears</p><strong>{{ wears }}</strong><small>Based on your confirmations</small></div>
+</div>
+<div class="bottom-grid">
+  <a class="feature-card" href="{{ url_for('panic') }}"><div class="feature-icon warm">⚡</div><div><p class="eyebrow">WHEN TIME IS RUNNING OUT</p><h3>Need a look in a hurry?</h3><p>Let Rewear Rescue shortlist complete outfits from your available pieces.</p><span class="text-link">Try Rewear Rescue →</span></div></a>
+  <a class="feature-card" href="{{ url_for('wardrobe') }}"><div class="feature-icon sage">✳</div><div><p class="eyebrow">START WITH YOUR CLOSET</p><h3>Bring your wardrobe online.</h3><p>Add pieces, organise them and make your inventory useful.</p><span class="text-link">Add garments →</span></div></a>
+</div>
+{% endblock %}

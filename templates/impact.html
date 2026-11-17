@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Closet Insights{% endblock %}
+{% block eyebrow %}WARDROBE INSIGHTS{% endblock %}
+{% block content %}
+<div class="page-title-row"><div><p class="eyebrow">MAKE YOUR EXISTING CLOTHES COUNT</p><h1>Use what you own<span class="title-period">.</span></h1><p class="lead">A simple view of wardrobe activity based on your saved items and confirmed wears.</p></div></div>
+<div class="impact-note"><span>✳</span><p><strong>A note on measurement</strong><br>These are wardrobe-use indicators, not verified carbon or water savings. Environmental impact claims require a separate lifecycle methodology.</p></div>
+<div class="stats-grid impact-stats"><div class="stat-card"><span class="stat-icon">▤</span><p>Garments tracked</p><strong>{{ garments }}</strong><small>Current wardrobe inventory</small></div><div class="stat-card"><span class="stat-icon">↻</span><p>Confirmed outfit wears</p><strong>{{ wears }}</strong><small>Wear records you confirmed</small></div><div class="stat-card"><span class="stat-icon">▦</span><p>Outfit plans created</p><strong>{{ plan_count }}</strong><small>Planned wardrobe use</small></div></div>
+<section class="usage-panel"><p class="eyebrow">WEAR HISTORY</p><h2>Most-used pieces</h2>{% for name, count in most_used %}<div class="usage-row"><span>{{ name }}</span><div class="usage-track"><i style="width: {{ [count * 18, 100]|min }}%"></i></div><strong>{{ count }}</strong></div>{% else %}<div class="empty-inline"><p>No confirmed wears yet. Use the planner and confirm an outfit after wearing it.</p></div>{% endfor %}</section>
+{% endblock %}
