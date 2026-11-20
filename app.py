@@ -508,6 +508,7 @@ def confirm_worn(plan_id):
 def panic():
     suggestions = []
     details = {}
+
     if request.method == "POST":
         details = {
             "event": request.form.get("event", "Last-minute event"),
@@ -516,17 +517,28 @@ def panic():
             "preference": request.form.get("preference", "").strip(),
             "when": request.form.get("when", "").strip()
         }
-        if not details["weather"] and details.get("location"):
-            details["weather"] = get_live_weather(details["location"]) or ""
-            if not details["weather"]:
-                flash("Live weather could not be retrieved. Add weather manually or try another city.", "error")
-        suggestions = build_outfit_suggestions(details["event"], details["weather"],
-                                               details["preference"], get_garments())
-        suggestions = try_gemini_style(details["event"], details["weather"],
-                                        details["preference"], suggestions)
+
+        # Rewear Rescue uses local outfit generation.
+        # Avoid external weather and Gemini calls during the demo.
+        suggestions = build_outfit_suggestions(
+            details["event"],
+            details["weather"],
+            details["preference"],
+            get_garments()
+        )
+
         if not suggestions:
-            flash("No suitable combinations found. Add available tops, bottoms or dresses first.", "error")
-    return render_template("panic.html", suggestions=suggestions, details=details)
+            flash(
+                "No suitable combinations found. "
+                "Add available tops, bottoms or dresses first.",
+                "error"
+            )
+
+    return render_template(
+        "panic.html",
+        suggestions=suggestions,
+        details=details
+    )
 
 @app.route("/impact")
 def impact():
