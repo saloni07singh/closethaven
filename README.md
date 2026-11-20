@@ -11,7 +11,7 @@ ClosetHaven is a personal closet intelligence prototype that helps people organi
 - Add garments by selecting a photo from your device or taking a photo on a supported mobile browser.
 - Photo preview before saving.
 - Gemini image recognition can suggest a garment name, category, colour and season when `GEMINI_API_KEY` is configured.
-- Garment images are normalized to PNG. Background removal is attempted with `rembg` when its model is available.
+- Garment images are resized and compressed into web-ready JPEG previews to reduce memory use on small hosting instances.
 - Category and item-type selections, garment cards, availability and laundry status.
 
 ### Personal styling and Rewear Rescue
@@ -32,7 +32,7 @@ ClosetHaven is a personal closet intelligence prototype that helps people organi
 - Python + Flask
 - HTML, CSS and JavaScript
 - SQLite
-- Pillow and optional `rembg` background removal
+- Pillow-based image resizing and compression
 - Google Gemini API for optional image recognition and styling explanations
 - Open-Meteo geocoding and weather endpoints
 - Gunicorn for hosted deployment

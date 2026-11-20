@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = new FormData(); data.append("image", file);
     try {
       const response = await fetch("/garments/recognise", { method: "POST", body: data });
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error(`Photo recognition is temporarily unavailable (server response ${response.status}). You can still complete the details manually.`);
+      }
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Photo processing failed");
       if (result.name) form.elements.name.value = result.name;

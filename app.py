@@ -8,7 +8,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from werkzeug.utils import secure_filename
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, UnidentifiedImageError
 import requests
 from dotenv import load_dotenv
 
@@ -18,6 +18,8 @@ UPLOAD_DIR = BASE_DIR / "static" / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
 DB_PATH = BASE_DIR / "wardrobe.db"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+# Reject pathological image dimensions before they can exhaust a small hosting instance.
+Image.MAX_IMAGE_PIXELS = 12_000_000
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") or "closethaven-local-development-only-change-before-deploy"
@@ -125,20 +127,26 @@ def valid_image_file(path):
         return False
 
 def process_garment_image(source_path):
-    """Normalize garment imagery and remove its background when rembg is installed."""
+    """Create a small web-ready preview without memory-heavy background removal."""
     try:
-        image = ImageOps.exif_transpose(Image.open(source_path)).convert("RGBA")
-        try:
-            from rembg import remove
-            image = remove(image)
-        except Exception as exc:
-            app.logger.info("Background removal unavailable; retaining normalized image: %s", exc)
-        image.thumbnail((1200, 1200), Image.Resampling.LANCZOS)
-        output = UPLOAD_DIR / f"{uuid.uuid4().hex}.png"
-        image.save(output, format="PNG", optimize=True)
+        with Image.open(source_path) as opened:
+            image = ImageOps.exif_transpose(opened)
+            image.thumbnail((900, 900), Image.Resampling.LANCZOS)
+            # JPEG keeps uploaded previews substantially smaller than full-size PNGs.
+            if image.mode not in ("RGB", "L"):
+                background = Image.new("RGB", image.size, "white")
+                if "A" in image.getbands():
+                    background.paste(image, mask=image.getchannel("A"))
+                else:
+                    background.paste(image.convert("RGB"))
+                image = background
+            else:
+                image = image.convert("RGB")
+            output = UPLOAD_DIR / f"{uuid.uuid4().hex}.jpg"
+            image.save(output, format="JPEG", quality=82, optimize=True)
         return output.name
     except Exception as exc:
-        app.logger.warning("Image processing failed: %s", exc)
+        app.logger.warning("Image processing failed; retaining original upload: %s", exc)
         return None
 
 def classify_with_gemini(image_path):
@@ -370,11 +378,12 @@ def recognise_garment():
     if not valid_image_file(path):
         path.unlink(missing_ok=True)
         return jsonify({"error": "The selected file is not a valid JPG, PNG or WEBP image."}), 400
-    data = classify_with_gemini(path)
+    # Compress first, then send the smaller image to the optional Gemini classifier.
     processed = process_garment_image(path)
     if processed:
         path.unlink(missing_ok=True)
         image_name = processed
+    data = classify_with_gemini(UPLOAD_DIR / image_name)
     if not data:
         return jsonify({"image": image_name, "message": "Photo prepared. AI recognition is unavailable, so review the details manually."})
     data["image"] = image_name
