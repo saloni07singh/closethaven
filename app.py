@@ -164,7 +164,7 @@ def classify_with_gemini(image_path):
         subcategory (short practical type), color (main color), season (All season, Summer, Winter, Monsoon).
         Be conservative. If uncertain, use the closest category."""
         response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+            model=os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
             contents=[prompt, img]
         )
         raw = response.text.strip().replace("```json", "").replace("```", "").strip()
