@@ -1,121 +1,272 @@
-# ClosetHaven | Tech Titans
+# ClosetHaven | Personal Closet Intelligence
 
-Updated hackathon MVP package aligned with the submitted 17-slide presentation.
+**Wear more of what you own.**
 
-**Wear more of what you own.**  
-ClosetHaven is a personal closet intelligence prototype that helps people organise garments, discover outfit combinations from their existing clothes, plan looks and track confirmed wear.
+ClosetHaven is an agentic personal closet intelligence platform developed to help people organise their existing clothing, discover outfit combinations, plan what to wear and make better use of what they already own.
 
-## What is included
+The project addresses a common problem: people often own plenty of clothes but struggle to remember what they have, find suitable combinations or keep track of which items are available.
 
-### Digital closet
-- Add garments by selecting a photo from your device or taking a photo on a supported mobile browser.
-- Photo preview before saving.
-- Gemini image recognition can suggest a garment name, category, colour and season when `GEMINI_API_KEY` is configured.
-- Garment images are resized and compressed into web-ready JPEG previews to reduce memory use on small hosting instances.
-- Category and item-type selections, garment cards, availability and laundry status.
+ClosetHaven brings digital closet management, AI-assisted features, outfit recommendations and wear tracking into one platform, with a focus on sustainable clothing utilisation.
 
-### Personal styling and Rewear Rescue
-- AI Stylist and Rewear Rescue/Panic Mode generate combinations from actual saved inventory.
-- Laundry items are excluded from recommendations.
-- Gemini can improve recommendation explanations, but cannot add garments that are absent from the database.
-- Live current weather can be retrieved from Open-Meteo when a city is supplied and manual weather context is left blank.
-- Users review and approve an outfit before it is saved.
+---
 
-### Planning and wear history
-- Save outfits and schedule them for an event/date.
-- A scheduled outfit is not automatically counted as worn.
-- Wear history changes only after the user explicitly confirms “I wore this”.
-- Wardrobe insights report garment and wear activity. They do not claim measured carbon, water or waste savings.
+## Project Overview
 
-## Technology
+ClosetHaven was developed as a working web application for the **Agentic AI Hackathon 2026**, under the theme:
 
-- Python + Flask
-- HTML, CSS and JavaScript
-- SQLite
-- Pillow-based image resizing and compression
-- Google Gemini API for optional image recognition and styling explanations
-- Open-Meteo geocoding and weather endpoints
-- Gunicorn for hosted deployment
+**Agentic AI for Climate, Sustainability and Green Innovation**
 
-## Run locally on Windows / VS Code
+- **Team:** T063 | Tech Titans
+- **Team Members:** Saloni Singh and Aaron Mendonca
+- **Primary Focus:** Sustainable clothing utilisation
+- **Project Type:** Working MVP / Web Application
 
-1. Extract the ZIP.
-2. Open the `ClosetHaven` folder in VS Code.
-3. Open **Terminal → New Terminal**.
-4. Create and activate a virtual environment:
+## Key Features
 
-   ```powershell
-   py -3.11 -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
+### 1. Digital Closet Management
 
-   If PowerShell blocks activation:
+Organise and manage clothing through a digital closet.
 
-   ```powershell
-   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-   .\.venv\Scripts\Activate.ps1
-   ```
+- Add clothing using images uploaded from a device or captured through a supported camera.
+- Organise clothing into categories.
+- Review and edit clothing details.
+- Use AI-assisted image recognition to suggest clothing details when the Gemini service is available.
+- Track whether clothing is available or currently in the laundry.
+- View saved clothing through an organised interface.
 
-5. Install dependencies:
+### 2. AI-Assisted Styling
 
-   ```powershell
-   python -m pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
+Generate outfit suggestions using clothing already recorded in the user's digital closet.
 
-6. Copy `.env.example` to `.env`. Add your Gemini key after `GEMINI_API_KEY=`. Keep `.env` private.
-7. Start the app:
+- Explore outfit combinations for different occasions.
+- Use available clothing as the basis for recommendations.
+- Review suggested combinations before selecting an outfit.
+- Reduce the effort involved in deciding what to wear.
 
-   ```powershell
-   python app.py
-   ```
+### 3. Rewear Rescue
 
-8. Open `http://127.0.0.1:5000`.
+**Rewear Rescue is ClosetHaven's main showstopper.**
 
-If the background-removal model has not downloaded yet, the first image processing request may take longer. If background removal cannot run, the app retains a normalized image rather than blocking garment entry.
+It helps users rediscover and reuse their existing clothing through an occasion-based outfit recommendation workflow.
 
-## Publish a preview using GitHub + Render
+The workflow:
 
-This repository includes a `Procfile` and `render.yaml` for Render.
+1. The user describes an occasion and their outfit requirements.
+2. The system retrieves relevant items from the recorded digital closet.
+3. Items marked unavailable or in the laundry are excluded.
+4. Suitable outfit combinations are generated using the available inventory.
+5. The user reviews the recommendations and chooses a preferred combination.
+6. The selected outfit can be saved or scheduled.
+7. Wear history can be updated after the user confirms that the outfit was actually worn.
 
-1. Create a GitHub repository named `closethaven` (or another name you choose).
-2. Extract this ZIP and open the `digital_wardrobe_agent` folder in VS Code.
-3. Create the Git repository and push the contents of this folder to GitHub. Do not upload `.env`, `wardrobe.db`, or personal garment photos.
-4. Sign in to Render and choose **New → Blueprint**.
-5. Connect the GitHub repository and deploy the `render.yaml` configuration.
-6. In the Render service's **Environment** settings, add:
-   - `GEMINI_API_KEY`: your Gemini API key.
-   - `FLASK_SECRET_KEY`: a long random secret if Render has not generated it from the Blueprint.
-   - `ACCESS_PASSWORD`: a separate strong preview access code that you can share with the judges.
-   - `GEMINI_MODEL`: keep `gemini-2.5-flash` unless you have verified another model is available to your API project.
-7. Wait for the build and deployment to finish. Open the public `onrender.com` URL. The app will request the preview access code when `ACCESS_PASSWORD` is configured.
+This connected workflow is called the **Rewear Intelligence Loop**.
 
-**Keep API keys in Render Environment settings. Never put them in HTML, JavaScript, GitHub, screenshots or the PPT.** If a key is accidentally committed, revoke it and generate a new one.
+The user retains control over the final outfit selection and confirmation of actual wear.
 
-## Important deployment limitations
+### 4. Outfit Planning and Wear Tracking
 
-This ZIP is a hackathon MVP, not a production multi-customer SaaS release.
+- Save preferred outfit combinations.
+- Schedule outfits for upcoming occasions.
+- View planned outfits.
+- Confirm when a scheduled outfit has actually been worn.
+- Maintain wear history based on user confirmation.
+- View wardrobe usage indicators.
 
-- The database currently represents one shared closet. The preview access code is a shared gate, not individual user accounts or data separation.
-- A production launch needs user registration/login, per-user database ownership, CSRF protection, rate limiting, image/file validation and abuse controls.
-- SQLite and uploaded images are stored on the app filesystem. Many entry-level hosting instances use ephemeral storage, so data can be lost on redeploy/restart. Before storing real users' wardrobes, move to a managed persistent database and object storage, and configure persistent backups.
-- Check the hosting provider's current pricing, persistent-storage availability and service limits before launch.
-- Gemini and background removal can incur usage, latency or hosting costs. Do not promise unlimited processing.
-- Live weather is retrieved only when a city is provided and no manual weather text is entered. If the weather service is unavailable, the app asks the user to enter conditions manually.
-- The planner is an in-app planner, not a Google or Apple calendar sync.
+A scheduled outfit is not automatically recorded as worn. Actual wear history changes only after user confirmation.
 
-## Demo walkthrough
+---
 
-1. Open **My wardrobe** and add a garment using upload or camera.
-2. Review the suggested details and edit them if needed.
-3. Mark a garment as in laundry and confirm it is excluded from outfit suggestions.
-4. Open **AI Stylist** or **Rewear Rescue** and choose an occasion.
-5. Supply a city for live weather, or enter weather manually.
-6. Review the generated options and approve one to save it.
-7. Schedule the saved outfit in **Outfit planner**.
-8. After actually wearing it, select **I wore this** to update wear history.
-9. Review usage indicators in **Wardrobe insights**.
+## Technology Stack
 
-## Environment variables
+| Component | Technology |
+|---|---|
+| Backend | Python, Flask |
+| Frontend | HTML, CSS, JavaScript |
+| Database | SQLite |
+| AI Integration | Google Gemini API |
+| Image Processing | Pillow |
+| Web Server | Gunicorn |
+| Deployment | Render |
 
-See `.env.example`. At minimum, set a unique `FLASK_SECRET_KEY` for hosted production. `ACCESS_PASSWORD` enables a shared private-preview gate. Leave it unset only for a local development environment you control.
+### System Architecture
+
+The application follows a web-based client-server architecture.
+
+1. **Frontend:** HTML, CSS and JavaScript provide the user interface and interactive features.
+2. **Backend:** Flask handles application routes, requests, feature logic and communication between components.
+3. **Database:** SQLite stores closet information and application data.
+4. **AI Integration:** The Gemini API supports optional AI-assisted functionality, including image recognition when configured and available.
+5. **Image Processing:** Pillow handles image resizing and compression.
+6. **Deployment:** Gunicorn serves the Flask application on Render.
+
+---
+
+## Project Structure
+
+The main project components include:
+
+- `app.py` - Flask application and backend logic.
+- `templates/` - HTML templates.
+- `static/` - CSS, JavaScript and static assets.
+- `requirements.txt` - Python dependencies.
+- `Procfile` - Application start configuration.
+- `render.yaml` - Render deployment configuration.
+- `.gitignore` - Files and folders excluded from Git tracking.
+
+---
+
+## Running the Project Locally
+
+### Prerequisites
+
+- Python 3.11 or a compatible Python version.
+- Visual Studio Code or another code editor.
+- Git.
+- A Gemini API key for optional AI-assisted functionality.
+
+### Installation
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/saloni07singh/closethaven.git
+```
+
+**2. Open the project directory**
+
+```bash
+cd closethaven
+```
+
+**3. Create a virtual environment**
+
+On Windows:
+
+```powershell
+py -3.11 -m venv .venv
+```
+
+**4. Activate the virtual environment**
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks activation:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.venv\Scripts\Activate.ps1
+```
+
+**5. Install dependencies**
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+**6. Configure environment variables**
+
+Set the required environment variables in your local terminal. For example, in PowerShell:
+
+```powershell
+$env:GEMINI_API_KEY = "your_own_api_key"
+$env:FLASK_SECRET_KEY = "your_own_secret_key"
+```
+
+Use your own credentials. Never commit actual API keys or secret values to GitHub.
+
+**7. Run the application**
+
+```bash
+python app.py
+```
+
+**8. Open the application**
+
+Visit:
+
+http://127.0.0.1:5000
+
+---
+
+## Deployment
+
+ClosetHaven is deployed as a Flask web application using **Render**.
+
+The repository includes a `Procfile` and Render configuration to support deployment.
+
+The deployed application uses environment variables for sensitive configuration, including the Gemini API key and Flask secret key.
+
+API credentials should be configured through the hosting provider's environment settings and must never be hardcoded into application source files or exposed through frontend code.
+
+---
+
+## Important Limitations
+
+ClosetHaven is a hackathon MVP and is not yet a production-ready multi-user SaaS platform.
+
+- Clothing availability and laundry status depend on user updates.
+- The application uses a shared closet data model rather than separate authenticated accounts for multiple users.
+- Rewear Rescue uses application-side outfit-generation logic to retrieve and recommend combinations from recorded inventory.
+- Gemini-assisted functionality depends on API availability, configuration and usage limits.
+- The application uses SQLite and local image storage. On hosting environments without persistent storage, data may be lost following restarts or redeployments.
+- The application does not currently provide fully automated laundry detection or external calendar synchronisation.
+- A production release would require individual user authentication, per-user data isolation, persistent managed storage, backups, stronger security controls and further testing.
+
+---
+
+## Sustainability Focus
+
+ClosetHaven encourages users to make better use of clothing they already own.
+
+By helping users rediscover underused items, explore new combinations and track actual wear, the platform aims to support more thoughtful clothing utilisation.
+
+Potential future evaluation metrics include:
+
+- Increased wear frequency of underused clothing.
+- Number of previously unused items rediscovered.
+- Number of outfit combinations created from existing inventory.
+- Purchases users report avoiding because they reused existing clothing.
+
+These are proposed indicators for future evaluation, not measured environmental outcomes.
+
+---
+
+## Future Scope
+
+Potential areas for further development include:
+
+- Improved clothing recognition and image processing.
+- Personalised recommendations based on user preferences and wear history.
+- More advanced outfit-planning capabilities.
+- Individual user accounts and secure personal closet storage.
+- Persistent database and cloud image storage.
+- Improved sustainability insights.
+- Integrations with clothing repair, resale, donation and recycling services.
+
+---
+
+## Hackathon Participation
+
+ClosetHaven was developed by **Team T063 | Tech Titans** for the Agentic AI Hackathon 2026.
+
+The project explored how agentic workflows and personal closet intelligence could encourage sustainable clothing utilisation through a practical working MVP.
+
+The hackathon provided an opportunity to develop the concept, build the application, deploy it and present the solution to the judging panel.
+
+### Team
+
+- **Saloni Singh**
+- **Aaron Mendonca** - Team Leader
+
+---
+
+## Project
+
+**ClosetHaven | Personal Closet Intelligence**
+
+*Helping people make better use of what they already own.*
+
+**Developed by Team T063 | Tech Titans**
